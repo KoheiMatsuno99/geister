@@ -61,7 +61,7 @@ const DraggableGhost = memo(
 				{...listeners}
 				{...attributes}
 			>
-				{ghost.isRevealed ? (
+				{ghost.isRevealed || ghost.owner === "player" ? (
 					<img
 						src={ghost.color === "blue" ? blueGhostImg : redGhostImg}
 						alt={`${ghost.color} ghost`}
