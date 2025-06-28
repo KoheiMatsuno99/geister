@@ -26,3 +26,5 @@ dist-ssr
 .claude/*
 CLAUDE.md
 dist
+*storybook.log
+storybook-static
