@@ -12,15 +12,16 @@ export const generatePossibleMoves = (gameState: GameState): Move[] => {
 
 	return currentPlayerGhosts
 		.filter((ghost) => !gameState.capturedGhosts.includes(ghost))
-		.flatMap((ghost) => 
+		.flatMap((ghost) =>
 			getAdjacentPositions(ghost.position)
 				.filter((toPosition) => canMove(gameState, ghost.position, toPosition))
 				.map((toPosition) => ({
 					from: ghost.position,
 					to: toPosition,
 					ghost,
-					capturedGhost: gameState.board[toPosition.row][toPosition.col] || undefined,
-				}))
+					capturedGhost:
+						gameState.board[toPosition.row][toPosition.col] || undefined,
+				})),
 		);
 };
 

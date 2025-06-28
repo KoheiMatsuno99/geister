@@ -1,4 +1,11 @@
-import type { GameState, Ghost, GhostColor, Move, Player, Position } from "../types/game";
+import type {
+	GameState,
+	Ghost,
+	GhostColor,
+	Move,
+	Player,
+	Position,
+} from "../types/game";
 
 export const BOARD_SIZE = 6;
 
