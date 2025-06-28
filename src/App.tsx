@@ -1,34 +1,64 @@
 import { useState } from "react";
-import viteLogo from "/vite.svg";
-import reactLogo from "./assets/react.svg";
+import { Board } from "./components/Board/Board";
+import { Entrance } from "./components/Entrance/Entrance";
+import { useGameState } from "./hooks/useGameState";
+import type { Ghost, Position } from "./types/game";
 import "./App.css";
 
+type GameScreen = "entrance" | "game";
+
 function App() {
-	const [count, setCount] = useState(0);
+	const [currentScreen, setCurrentScreen] = useState<GameScreen>("entrance");
+	const { gameState, handleCellClick, handleGhostClick, resetGame } = useGameState();
+
+	const handleStartGame = () => {
+		resetGame();
+		setCurrentScreen("game");
+	};
+
+	const handleBackToEntrance = () => {
+		setCurrentScreen("entrance");
+	};
+
+	const handleGhostMove = (_ghost: Ghost, newPosition: Position) => {
+		// Handle drag & drop moves - convert to position click
+		handleCellClick(newPosition);
+	};
+
+	if (currentScreen === "entrance") {
+		return <Entrance onStartGame={handleStartGame} />;
+	}
 
 	return (
-		<>
-			<div>
-				<a href="https://vite.dev" target="_blank" rel="noopener">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank" rel="noopener">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
+		<div className="game-container">
+			<div className="game-header">
+				<h1>Geister</h1>
+				<div className="game-controls">
+					<button
+						type="button"
+						onClick={handleBackToEntrance}
+						className="back-button"
+					>
+						Back to Menu
+					</button>
+					<button type="button" onClick={resetGame} className="reset-button">
+						New Game
+					</button>
+				</div>
 			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button type="button" onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
+			<div className="game-info">
+				<p>Current Player: {gameState.currentPlayer}</p>
+				{gameState.selectedPiece && (
+					<p>Selected: {gameState.selectedPiece.color} ghost</p>
+				)}
 			</div>
-			<p className="read-the-docs">
-				Click on the Vite and React logos to learn more
-			</p>
-		</>
+			<Board
+				gameState={gameState}
+				onCellClick={handleCellClick}
+				onGhostClick={handleGhostClick}
+				onGhostMove={handleGhostMove}
+			/>
+		</div>
 	);
 }
 
