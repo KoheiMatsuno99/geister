@@ -26,7 +26,7 @@ export interface GameState {
 	board: (Ghost | null)[][];
 	currentPlayer: Player;
 	gamePhase: GamePhase;
-	selectedPiece: Position | null;
+	selectedPiece: Ghost | null;
 	moveHistory: Move[];
 	playerGhosts: Ghost[];
 	computerGhosts: Ghost[];
