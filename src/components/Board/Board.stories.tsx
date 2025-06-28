@@ -39,6 +39,7 @@ export const Default: Story = {
 		gameState: initialGameState,
 		onCellClick: () => {},
 		onGhostClick: () => {},
+		onGhostMove: () => {},
 	},
 };
 
@@ -54,6 +55,7 @@ export const WithSelectedPiece: Story = {
 		},
 		onCellClick: () => {},
 		onGhostClick: () => {},
+		onGhostMove: () => {},
 	},
 };
 
@@ -72,6 +74,7 @@ export const WithRevealedGhosts: Story = {
 		},
 		onCellClick: () => {},
 		onGhostClick: () => {},
+		onGhostMove: () => {},
 	},
 };
 
@@ -87,6 +90,7 @@ export const ComputerTurn: Story = {
 		},
 		onCellClick: () => {},
 		onGhostClick: () => {},
+		onGhostMove: () => {},
 	},
 };
 
@@ -125,5 +129,6 @@ export const MidGame: Story = {
 		})(),
 		onCellClick: () => {},
 		onGhostClick: () => {},
+		onGhostMove: () => {},
 	},
 };

@@ -145,6 +145,23 @@
 	background-color: #f0f0f0;
 }
 
+.board-cell--drop-target {
+	background-color: #e3f2fd;
+	border: 2px solid #2196f3;
+	box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+.ghost--dragging {
+	opacity: 0.8;
+	transform: scale(1.1);
+	z-index: 1000;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ghost--selected {
+	box-shadow: 0 0 0 3px #ff9800;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
 	.board-cell {
