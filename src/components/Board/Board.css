@@ -86,21 +86,18 @@
 }
 
 .ghost--blue.ghost--revealed {
-	background-color: #2196f3;
+	background-color: transparent;
 	border-color: #1976d2;
-	color: white;
 }
 
 .ghost--red.ghost--revealed {
-	background-color: #f44336;
+	background-color: transparent;
 	border-color: #d32f2f;
-	color: white;
 }
 
 .ghost--hidden {
-	background-color: #9e9e9e;
+	background-color: transparent;
 	border-color: #616161;
-	color: white;
 }
 
 .ghost--player {
@@ -111,15 +108,11 @@
 	border-style: dashed;
 }
 
-.ghost-color {
-	text-transform: uppercase;
-	font-size: 12px;
-	font-weight: bold;
-}
-
-.ghost-unknown {
-	font-size: 18px;
-	font-weight: bold;
+.ghost-image {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border-radius: 50%;
 }
 
 .valid-move-indicator {

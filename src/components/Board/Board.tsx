@@ -1,4 +1,7 @@
 import { memo } from "react";
+import blueGhostImg from "../../assets/blueGhost.jpeg";
+import redGhostImg from "../../assets/redGhost.jpeg";
+import unknownGhostImg from "../../assets/unknownGhost.jpeg";
 import { canMove } from "../../game/rules";
 import type { GameState, Ghost, Position } from "../../types/game";
 import "./Board.css";
@@ -62,9 +65,17 @@ export const Board = memo(
 							data-testid={`ghost-${ghost.id}`}
 						>
 							{ghost.isRevealed ? (
-								<span className="ghost-color">{ghost.color}</span>
+								<img
+									src={ghost.color === "blue" ? blueGhostImg : redGhostImg}
+									alt={`${ghost.color} ghost`}
+									className="ghost-image"
+								/>
 							) : (
-								<span className="ghost-unknown">?</span>
+								<img
+									src={unknownGhostImg}
+									alt="Unknown ghost"
+									className="ghost-image"
+								/>
 							)}
 						</div>
 					)}
