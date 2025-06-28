@@ -1,0 +1,268 @@
+.ghost-setup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2rem;
+	min-height: 100vh;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+}
+
+.setup-header {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.setup-header h2 {
+	font-size: 2rem;
+	margin: 0 0 0.5rem 0;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.setup-header p {
+	font-size: 1.1rem;
+	margin: 0;
+	opacity: 0.9;
+}
+
+.setup-content {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	align-items: center;
+	margin-bottom: 2rem;
+}
+
+.ghost-list {
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	padding: 1.5rem;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	width: 100%;
+	max-width: 400px;
+}
+
+.ghost-list h3 {
+	margin: 0 0 1rem 0;
+	font-size: 1.2rem;
+}
+
+.ghost-items {
+	display: grid;
+	grid-template-columns: repeat(4, 50px);
+	gap: 0.75rem;
+	justify-content: center;
+}
+
+.ghost-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50px;
+	height: 50px;
+	background: rgba(255, 255, 255, 0.2);
+	border-radius: 8px;
+	cursor: grab;
+	transition: all 0.2s ease;
+	user-select: none;
+}
+
+.ghost-item:hover {
+	background: rgba(255, 255, 255, 0.3);
+	transform: translateY(-1px);
+}
+
+.ghost-item--dragging {
+	opacity: 0.8;
+	transform: scale(1.05);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	z-index: 1000;
+}
+
+.ghost-item-image {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.ghost-item-label {
+	font-weight: 500;
+	text-transform: capitalize;
+}
+
+.all-placed {
+	text-align: center;
+	font-style: italic;
+	opacity: 0.8;
+	margin: 1rem 0;
+}
+
+.setup-board {
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	padding: 1.5rem;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.board-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.board-row {
+	display: flex;
+	gap: 2px;
+}
+
+.setup-cell {
+	width: 50px;
+	height: 50px;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	background: rgba(255, 255, 255, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	transition: all 0.2s ease;
+}
+
+.setup-cell--valid {
+	background: rgba(76, 175, 80, 0.3);
+	border-color: #4caf50;
+}
+
+.setup-cell--occupied {
+	background: rgba(255, 255, 255, 0.4);
+}
+
+.setup-cell--drop-target {
+	background: rgba(33, 150, 243, 0.5);
+	border: 2px solid #2196f3;
+	box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+.placed-ghost {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.placed-ghost-image {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.setup-actions {
+	text-align: center;
+}
+
+.start-game-button {
+	background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+	border: none;
+	border-radius: 25px;
+	color: white;
+	font-size: 1.2rem;
+	font-weight: 600;
+	padding: 1rem 2rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.start-game-button:enabled:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+	background: linear-gradient(135deg, #5cbf60 0%, #4fb85a 100%);
+}
+
+.start-game-button:disabled {
+	background: rgba(255, 255, 255, 0.3);
+	color: rgba(255, 255, 255, 0.6);
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.setup-content {
+		gap: 1.5rem;
+	}
+
+	.ghost-list {
+		max-width: 300px;
+	}
+
+	.ghost-items {
+		grid-template-columns: repeat(4, 40px);
+	}
+
+	.ghost-item {
+		width: 40px;
+		height: 40px;
+	}
+
+	.setup-cell {
+		width: 40px;
+		height: 40px;
+	}
+
+	.placed-ghost-image {
+		width: 32px;
+		height: 32px;
+	}
+
+	.ghost-setup {
+		padding: 1rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.setup-header h2 {
+		font-size: 1.5rem;
+	}
+
+	.setup-header p {
+		font-size: 1rem;
+	}
+
+	.ghost-items {
+		grid-template-columns: repeat(4, 35px);
+	}
+
+	.ghost-item {
+		width: 35px;
+		height: 35px;
+	}
+
+	.setup-cell {
+		width: 35px;
+		height: 35px;
+	}
+
+	.placed-ghost-image {
+		width: 28px;
+		height: 28px;
+	}
+
+	.ghost-item-image {
+		width: 28px;
+		height: 28px;
+	}
+
+	.start-game-button {
+		font-size: 1rem;
+		padding: 0.8rem 1.5rem;
+	}
+}

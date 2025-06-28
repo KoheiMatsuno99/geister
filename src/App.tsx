@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Board } from "./components/Board/Board";
 import { Entrance } from "./components/Entrance/Entrance";
+import { GhostSetup } from "./components/GhostSetup/GhostSetup";
 import { useGameState } from "./hooks/useGameState";
 import type { Ghost, Position } from "./types/game";
 import "./App.css";
@@ -9,7 +10,14 @@ type GameScreen = "entrance" | "game";
 
 function App() {
 	const [currentScreen, setCurrentScreen] = useState<GameScreen>("entrance");
-	const { gameState, handleCellClick, handleGhostClick, resetGame } = useGameState();
+	const {
+		gameState,
+		handleCellClick,
+		handleGhostClick,
+		handlePlaceGhost,
+		handleStartGamePhase,
+		resetGame,
+	} = useGameState();
 
 	const handleStartGame = () => {
 		resetGame();
@@ -27,6 +35,34 @@ function App() {
 
 	if (currentScreen === "entrance") {
 		return <Entrance onStartGame={handleStartGame} />;
+	}
+
+	// Show setup screen when game is in setup phase
+	if (gameState.gamePhase === "setup") {
+		return (
+			<div className="game-container">
+				<div className="game-header">
+					<h1>Geister - Setup</h1>
+					<div className="game-controls">
+						<button
+							type="button"
+							onClick={handleBackToEntrance}
+							className="back-button"
+						>
+							Back to Menu
+						</button>
+						<button type="button" onClick={resetGame} className="reset-button">
+							New Game
+						</button>
+					</div>
+				</div>
+				<GhostSetup
+					gameState={gameState}
+					onPlaceGhost={handlePlaceGhost}
+					onStartGame={handleStartGamePhase}
+				/>
+			</div>
+		);
 	}
 
 	return (

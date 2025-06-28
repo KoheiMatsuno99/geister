@@ -46,13 +46,11 @@ const DraggableGhost = memo(
 			: undefined;
 
 		return (
-			<div
+			<button
 				ref={setNodeRef}
 				style={style}
 				className={`ghost ghost--${ghost.color} ghost--${ghost.owner} ${ghost.isRevealed ? "ghost--revealed" : "ghost--hidden"} ${isSelected ? "ghost--selected" : ""} ${isDragging ? "ghost--dragging" : ""}`}
 				data-testid={`ghost-${ghost.id}`}
-				role="button"
-				tabIndex={0}
 				onClick={() => onGhostClick(ghost)}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" || e.key === " ") {
@@ -76,7 +74,7 @@ const DraggableGhost = memo(
 						className="ghost-image"
 					/>
 				)}
-			</div>
+			</button>
 		);
 	},
 );

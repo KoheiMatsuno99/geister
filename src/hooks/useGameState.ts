@@ -1,6 +1,10 @@
 import { useCallback, useState } from "react";
 import { calculateBestMove } from "../game/ai/engine";
-import { createInitialGameState } from "../game/gameInit";
+import {
+	createInitialGameState,
+	placePlayerGhost,
+	startGamePhase,
+} from "../game/gameInit";
 import { canMove, checkWinCondition, executeMove } from "../game/rules";
 import type { Difficulty } from "../types/ai";
 import type { GameState, Ghost, Player, Position } from "../types/game";
@@ -12,6 +16,8 @@ export interface UseGameStateResult {
 	winCondition: "capture_all_blue" | "lose_all_red" | "escape" | null;
 	handleCellClick: (position: Position) => void;
 	handleGhostClick: (ghost: Ghost) => void;
+	handlePlaceGhost: (ghost: Ghost, position: Position) => void;
+	handleStartGamePhase: () => void;
 	resetGame: () => void;
 	setDifficulty: (difficulty: Difficulty) => void;
 	executeAiMove: () => Promise<void>;
@@ -154,6 +160,28 @@ export const useGameState = (): UseGameStateResult => {
 		[isAiThinking, winner],
 	);
 
+	const handlePlaceGhost = useCallback((ghost: Ghost, position: Position) => {
+		setGameState((currentGameState) => {
+			try {
+				return placePlayerGhost(currentGameState, ghost, position);
+			} catch (error) {
+				console.error("Failed to place ghost:", error);
+				return currentGameState;
+			}
+		});
+	}, []);
+
+	const handleStartGamePhase = useCallback(() => {
+		setGameState((currentGameState) => {
+			try {
+				return startGamePhase(currentGameState);
+			} catch (error) {
+				console.error("Failed to start game phase:", error);
+				return currentGameState;
+			}
+		});
+	}, []);
+
 	return {
 		gameState,
 		isAiThinking,
@@ -161,6 +189,8 @@ export const useGameState = (): UseGameStateResult => {
 		winCondition: winCondition || null,
 		handleCellClick,
 		handleGhostClick,
+		handlePlaceGhost,
+		handleStartGamePhase,
 		resetGame,
 		setDifficulty,
 		executeAiMove,
