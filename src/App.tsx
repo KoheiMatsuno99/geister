@@ -3,7 +3,6 @@ import { Board } from "./components/Board/Board";
 import { Entrance } from "./components/Entrance/Entrance";
 import { GhostSetup } from "./components/GhostSetup/GhostSetup";
 import { useGameState } from "./hooks/useGameState";
-import type { Ghost, Position } from "./types/game";
 import "./App.css";
 
 type GameScreen = "entrance" | "game";
@@ -12,8 +11,10 @@ function App() {
 	const [currentScreen, setCurrentScreen] = useState<GameScreen>("entrance");
 	const {
 		gameState,
+		isAiThinking,
 		handleCellClick,
 		handleGhostClick,
+		handleGhostMove,
 		handlePlaceGhost,
 		handleStartGamePhase,
 		resetGame,
@@ -26,11 +27,6 @@ function App() {
 
 	const handleBackToEntrance = () => {
 		setCurrentScreen("entrance");
-	};
-
-	const handleGhostMove = (_ghost: Ghost, newPosition: Position) => {
-		// Handle drag & drop moves - convert to position click
-		handleCellClick(newPosition);
 	};
 
 	if (currentScreen === "entrance") {
@@ -84,6 +80,7 @@ function App() {
 			</div>
 			<div className="game-info">
 				<p>Current Player: {gameState.currentPlayer}</p>
+				{isAiThinking && <p>AI is thinking...</p>}
 				{gameState.selectedPiece && (
 					<p>Selected: {gameState.selectedPiece.color} ghost</p>
 				)}

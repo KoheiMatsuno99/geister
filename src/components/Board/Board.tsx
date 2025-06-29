@@ -28,15 +28,16 @@ interface DraggableGhostProps {
 	ghost: Ghost;
 	isSelected: boolean;
 	onGhostClick: (ghost: Ghost) => void;
+	gameState: GameState;
 }
 
 const DraggableGhost = memo(
-	({ ghost, isSelected, onGhostClick }: DraggableGhostProps) => {
+	({ ghost, isSelected, onGhostClick, gameState }: DraggableGhostProps) => {
 		const { attributes, listeners, setNodeRef, transform, isDragging } =
 			useDraggable({
 				id: `ghost-${ghost.id}`,
 				data: ghost,
-				disabled: ghost.owner !== "player" || !ghost.isRevealed,
+				disabled: ghost.owner !== "player" || gameState.gamePhase !== "playing",
 			});
 
 		const style = transform
@@ -46,7 +47,8 @@ const DraggableGhost = memo(
 			: undefined;
 
 		return (
-			<button
+			// biome-ignore lint/a11y/noStaticElementInteractions: role="button" is provided by @dnd-kit attributes
+			<div
 				ref={setNodeRef}
 				style={style}
 				className={`ghost ghost--${ghost.color} ghost--${ghost.owner} ${ghost.isRevealed ? "ghost--revealed" : "ghost--hidden"} ${isSelected ? "ghost--selected" : ""} ${isDragging ? "ghost--dragging" : ""}`}
@@ -74,7 +76,7 @@ const DraggableGhost = memo(
 						className="ghost-image"
 					/>
 				)}
-			</button>
+			</div>
 		);
 	},
 );
@@ -90,6 +92,7 @@ interface DroppableCellProps {
 	isEscapeSquare: boolean;
 	onCellClick: (row: number, col: number) => void;
 	onGhostClick: (ghost: Ghost) => void;
+	gameState: GameState;
 }
 
 const DroppableCell = memo(
@@ -102,6 +105,7 @@ const DroppableCell = memo(
 		isEscapeSquare,
 		onCellClick,
 		onGhostClick,
+		gameState,
 	}: DroppableCellProps) => {
 		const { isOver, setNodeRef } = useDroppable({
 			id: `cell-${row}-${col}`,
@@ -132,6 +136,7 @@ const DroppableCell = memo(
 						ghost={ghost}
 						isSelected={isSelected}
 						onGhostClick={onGhostClick}
+						gameState={gameState}
 					/>
 				)}
 				{isValidTarget && <div className="valid-move-indicator" />}
@@ -216,6 +221,7 @@ export const Board = memo(
 					isEscapeSquare={isEscapeSquare}
 					onCellClick={handleCellClick}
 					onGhostClick={onGhostClick}
+					gameState={gameState}
 				/>
 			);
 		};

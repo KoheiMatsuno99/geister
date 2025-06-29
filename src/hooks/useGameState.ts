@@ -16,6 +16,7 @@ export interface UseGameStateResult {
 	winCondition: "capture_all_blue" | "lose_all_red" | "escape" | null;
 	handleCellClick: (position: Position) => void;
 	handleGhostClick: (ghost: Ghost) => void;
+	handleGhostMove: (ghost: Ghost, newPosition: Position) => void;
 	handlePlaceGhost: (ghost: Ghost, position: Position) => void;
 	handleStartGamePhase: () => void;
 	resetGame: () => void;
@@ -72,36 +73,11 @@ export const useGameState = (): UseGameStateResult => {
 		}
 	}, [gameState, difficulty, isAiThinking, winner]);
 
-	const executePlayerMove = useCallback((from: Position, to: Position) => {
-		setGameState((currentGameState) => {
-			const ghost = currentGameState.board[from.row][from.col];
-			if (!ghost) return currentGameState;
-
-			const capturedGhost = currentGameState.board[to.row][to.col];
-
-			const move = {
-				from,
-				to,
-				ghost: {
-					...ghost,
-					isRevealed: capturedGhost ? true : ghost.isRevealed,
-				},
-				capturedGhost: capturedGhost
-					? {
-							...capturedGhost,
-							isRevealed: true,
-						}
-					: undefined,
-			};
-
-			return executeMove(currentGameState, move);
-		});
-	}, []);
-
 	const handleCellClick = useCallback(
 		(position: Position) => {
 			setGameState((currentGameState) => {
 				if (
+					currentGameState.gamePhase !== "playing" ||
 					currentGameState.currentPlayer !== "player" ||
 					isAiThinking ||
 					winner
@@ -118,10 +94,43 @@ export const useGameState = (): UseGameStateResult => {
 							position,
 						)
 					) {
-						executePlayerMove(
-							currentGameState.selectedPiece.position,
-							position,
-						);
+						// Execute move directly within this state update
+						const ghost =
+							currentGameState.board[
+								currentGameState.selectedPiece.position.row
+							][currentGameState.selectedPiece.position.col];
+						if (ghost) {
+							const capturedGhost =
+								currentGameState.board[position.row][position.col];
+
+							const move = {
+								from: currentGameState.selectedPiece.position,
+								to: position,
+								ghost: {
+									...ghost,
+									isRevealed: capturedGhost ? true : ghost.isRevealed,
+								},
+								capturedGhost: capturedGhost
+									? {
+											...capturedGhost,
+											isRevealed: true,
+										}
+									: undefined,
+							};
+
+							const newGameState = executeMove(currentGameState, move);
+							const finalGameState = {
+								...newGameState,
+								selectedPiece: null,
+							};
+
+							// If it's now computer's turn, schedule AI move
+							if (finalGameState.currentPlayer === "computer") {
+								setTimeout(() => executeAiMove(), 100);
+							}
+
+							return finalGameState;
+						}
 					}
 
 					// Clear selection
@@ -134,13 +143,14 @@ export const useGameState = (): UseGameStateResult => {
 				return currentGameState;
 			});
 		},
-		[isAiThinking, winner, executePlayerMove],
+		[isAiThinking, winner, executeAiMove],
 	);
 
 	const handleGhostClick = useCallback(
 		(ghost: Ghost) => {
 			setGameState((currentGameState) => {
 				if (
+					currentGameState.gamePhase !== "playing" ||
 					currentGameState.currentPlayer !== "player" ||
 					ghost.owner !== "player" ||
 					isAiThinking ||
@@ -150,10 +160,12 @@ export const useGameState = (): UseGameStateResult => {
 				}
 
 				// Select or deselect the ghost
+				const newSelectedPiece =
+					currentGameState.selectedPiece?.id === ghost.id ? null : ghost;
+
 				return {
 					...currentGameState,
-					selectedPiece:
-						currentGameState.selectedPiece?.id === ghost.id ? null : ghost,
+					selectedPiece: newSelectedPiece,
 				};
 			});
 		},
@@ -170,6 +182,55 @@ export const useGameState = (): UseGameStateResult => {
 			}
 		});
 	}, []);
+
+	const handleGhostMove = useCallback(
+		(ghost: Ghost, newPosition: Position) => {
+			setGameState((currentGameState) => {
+				if (
+					currentGameState.gamePhase !== "playing" ||
+					currentGameState.currentPlayer !== "player" ||
+					ghost.owner !== "player" ||
+					isAiThinking ||
+					winner
+				) {
+					return currentGameState;
+				}
+
+				if (canMove(currentGameState, ghost.position, newPosition)) {
+					// Execute move directly within this state update
+					const capturedGhost =
+						currentGameState.board[newPosition.row][newPosition.col];
+
+					const move = {
+						from: ghost.position,
+						to: newPosition,
+						ghost: {
+							...ghost,
+							isRevealed: capturedGhost ? true : ghost.isRevealed,
+						},
+						capturedGhost: capturedGhost
+							? {
+									...capturedGhost,
+									isRevealed: true,
+								}
+							: undefined,
+					};
+
+					const newGameState = executeMove(currentGameState, move);
+
+					// If it's now computer's turn, schedule AI move
+					if (newGameState.currentPlayer === "computer") {
+						setTimeout(() => executeAiMove(), 100);
+					}
+
+					return newGameState;
+				}
+
+				return currentGameState;
+			});
+		},
+		[isAiThinking, winner, executeAiMove],
+	);
 
 	const handleStartGamePhase = useCallback(() => {
 		setGameState((currentGameState) => {
@@ -189,6 +250,7 @@ export const useGameState = (): UseGameStateResult => {
 		winCondition: winCondition || null,
 		handleCellClick,
 		handleGhostClick,
+		handleGhostMove,
 		handlePlaceGhost,
 		handleStartGamePhase,
 		resetGame,

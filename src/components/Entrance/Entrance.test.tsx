@@ -5,7 +5,7 @@ describe("Entrance Component", () => {
 	describe("props", () => {
 		it("should accept onStartGame prop", () => {
 			const mockOnStartGame = vi.fn();
-			
+
 			// Test that the component accepts the required props
 			expect(() => {
 				const props = { onStartGame: mockOnStartGame };
