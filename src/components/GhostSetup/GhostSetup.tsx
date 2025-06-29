@@ -110,7 +110,7 @@ const DroppableSetupCell = memo(
 									? "Unknown ghost"
 									: `${ghost.color} ghost`
 							}
-							className="placed-ghost-image"
+							className={`placed-ghost-image placed-ghost-image--${ghost.owner}`}
 						/>
 					</div>
 				)}

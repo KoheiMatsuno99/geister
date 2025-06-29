@@ -91,9 +91,13 @@ function App() {
 							{gameState.capturedGhosts.map((ghost) => (
 								<span
 									key={ghost.id}
-									className={`captured-ghost captured-ghost--${ghost.color}`}
+									className={`captured-ghost ${
+										ghost.isRevealed
+											? `captured-ghost--${ghost.color}`
+											: "captured-ghost--unknown"
+									}`}
 								>
-									{ghost.color} ({ghost.owner})
+									{ghost.isRevealed ? ghost.color : "?"} ({ghost.owner})
 								</span>
 							))}
 						</div>

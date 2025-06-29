@@ -325,22 +325,22 @@ describe("Game Rules", () => {
 			const move = {
 				from: { row: 3, col: 2 },
 				to: { row: 2, col: 2 },
-				ghost: { ...computerGhost, isRevealed: true },
-				capturedGhost: { ...playerGhost, isRevealed: true },
+				ghost: { ...computerGhost, isRevealed: false }, // Computer's ghost that moved - identity hidden
+				capturedGhost: { ...playerGhost, isRevealed: true }, // Player's ghost that was captured - identity revealed
 			};
 
 			const newGameState = executeMove(gameState, move);
 
-			// Check that the player ghost was captured
+			// Check that the player ghost was captured and identity is revealed
 			expect(newGameState.capturedGhosts).toHaveLength(1);
 			expect(newGameState.capturedGhosts[0].id).toBe("p1");
 			expect(newGameState.capturedGhosts[0].isRevealed).toBe(true);
 
-			// Check that the computer ghost moved and was revealed
+			// Check that the computer ghost moved but identity remains hidden
 			expect(newGameState.board[2][2]).toEqual({
 				...computerGhost,
 				position: { row: 2, col: 2 },
-				isRevealed: true,
+				isRevealed: false,
 			});
 			expect(newGameState.board[3][2]).toBeNull();
 
@@ -349,7 +349,7 @@ describe("Game Rules", () => {
 				row: 2,
 				col: 2,
 			});
-			expect(newGameState.computerGhosts[0].isRevealed).toBe(true);
+			expect(newGameState.computerGhosts[0].isRevealed).toBe(false);
 
 			// Check that the player ghost array is unchanged (captured ghosts remain in original arrays)
 			expect(newGameState.playerGhosts).toHaveLength(1);

@@ -115,6 +115,10 @@
 	border-radius: 50%;
 }
 
+.ghost--computer .ghost-image {
+	transform: rotate(180deg);
+}
+
 .valid-move-indicator {
 	position: absolute;
 	width: 12px;
@@ -180,6 +184,10 @@
 		height: 32px;
 	}
 
+	.ghost--computer .ghost-image {
+		transform: rotate(180deg);
+	}
+
 	.board {
 		padding: 12px;
 	}
@@ -200,6 +208,10 @@
 	.ghost-image {
 		width: 28px;
 		height: 28px;
+	}
+
+	.ghost--computer .ghost-image {
+		transform: rotate(180deg);
 	}
 
 	.board {

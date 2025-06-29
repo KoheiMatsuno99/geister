@@ -70,11 +70,13 @@ export const useGameState = (): UseGameStateResult => {
 				...aiMove,
 				ghost: {
 					...aiMove.ghost,
-					isRevealed: aiMove.capturedGhost ? true : aiMove.ghost.isRevealed,
+					// Computer's ghost that moved - don't reveal its identity
+					isRevealed: aiMove.ghost.isRevealed,
 				},
 				capturedGhost: aiMove.capturedGhost
 					? {
 							...aiMove.capturedGhost,
+							// Player's ghost that was captured - reveal its identity
 							isRevealed: true,
 						}
 					: undefined,

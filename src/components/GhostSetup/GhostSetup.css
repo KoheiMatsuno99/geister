@@ -161,6 +161,10 @@
 	border: 2px solid rgba(255, 255, 255, 0.8);
 }
 
+.placed-ghost-image--computer {
+	transform: rotate(180deg);
+}
+
 .setup-actions {
 	text-align: center;
 }
@@ -223,6 +227,10 @@
 		height: 32px;
 	}
 
+	.placed-ghost-image--computer {
+		transform: rotate(180deg);
+	}
+
 	.ghost-setup {
 		padding: 1rem;
 	}
@@ -254,6 +262,10 @@
 	.placed-ghost-image {
 		width: 28px;
 		height: 28px;
+	}
+
+	.placed-ghost-image--computer {
+		transform: rotate(180deg);
 	}
 
 	.ghost-item-image {
