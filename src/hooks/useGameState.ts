@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { calculateBestMove } from "../game/ai/engine";
 import {
 	createInitialGameState,
@@ -28,12 +28,14 @@ export const useGameState = (): UseGameStateResult => {
 	const [gameState, setGameState] = useState<GameState>(createInitialGameState);
 	const [isAiThinking, setIsAiThinking] = useState(false);
 	const [difficulty, setDifficultyState] = useState<Difficulty>("medium");
+	const [shouldExecuteAi, setShouldExecuteAi] = useState(false);
 
 	const { winner, condition: winCondition } = checkWinCondition(gameState);
 
 	const resetGame = useCallback(() => {
 		setGameState(createInitialGameState());
 		setIsAiThinking(false);
+		setShouldExecuteAi(false);
 	}, []);
 
 	const setDifficulty = useCallback((newDifficulty: Difficulty) => {
@@ -41,14 +43,24 @@ export const useGameState = (): UseGameStateResult => {
 	}, []);
 
 	const executeAiMove = useCallback(async () => {
+		console.log("executeAiMove called", {
+			isAiThinking,
+			currentPlayer: gameState.currentPlayer,
+			gamePhase: gameState.gamePhase,
+			winner,
+		});
+
 		if (isAiThinking || gameState.currentPlayer !== "computer" || winner) {
+			console.log("executeAiMove blocked by conditions");
 			return;
 		}
 
+		console.log("Starting AI thinking...");
 		setIsAiThinking(true);
 
 		try {
 			const aiMove = await calculateBestMove(gameState, difficulty);
+			console.log("AI calculated move:", aiMove);
 
 			const moveWithRevealedGhosts = {
 				...aiMove,
@@ -65,13 +77,40 @@ export const useGameState = (): UseGameStateResult => {
 			};
 
 			const newGameState = executeMove(gameState, moveWithRevealedGhosts);
+			console.log(
+				"AI move executed, new current player:",
+				newGameState.currentPlayer,
+			);
 			setGameState(newGameState);
 		} catch (error) {
 			console.error("AI move failed:", error);
 		} finally {
+			console.log("AI thinking finished");
 			setIsAiThinking(false);
 		}
 	}, [gameState, difficulty, isAiThinking, winner]);
+
+	// Handle AI execution when flag is set
+	useEffect(() => {
+		if (
+			shouldExecuteAi &&
+			gameState.currentPlayer === "computer" &&
+			gameState.gamePhase === "playing" &&
+			!isAiThinking &&
+			!winner
+		) {
+			console.log("AI flag detected, executing AI move");
+			setShouldExecuteAi(false);
+			setTimeout(() => executeAiMove(), 100);
+		}
+	}, [
+		shouldExecuteAi,
+		gameState.currentPlayer,
+		gameState.gamePhase,
+		isAiThinking,
+		winner,
+		executeAiMove,
+	]);
 
 	const handleCellClick = useCallback(
 		(position: Position) => {
@@ -126,7 +165,8 @@ export const useGameState = (): UseGameStateResult => {
 
 							// If it's now computer's turn, schedule AI move
 							if (finalGameState.currentPlayer === "computer") {
-								setTimeout(() => executeAiMove(), 100);
+								console.log("Player moved, setting AI trigger");
+								setShouldExecuteAi(true);
 							}
 
 							return finalGameState;
@@ -143,7 +183,7 @@ export const useGameState = (): UseGameStateResult => {
 				return currentGameState;
 			});
 		},
-		[isAiThinking, winner, executeAiMove],
+		[isAiThinking, winner],
 	);
 
 	const handleGhostClick = useCallback(
@@ -220,7 +260,8 @@ export const useGameState = (): UseGameStateResult => {
 
 					// If it's now computer's turn, schedule AI move
 					if (newGameState.currentPlayer === "computer") {
-						setTimeout(() => executeAiMove(), 100);
+						console.log("Player moved (drag&drop), setting AI trigger");
+						setShouldExecuteAi(true);
 					}
 
 					return newGameState;
@@ -229,7 +270,7 @@ export const useGameState = (): UseGameStateResult => {
 				return currentGameState;
 			});
 		},
-		[isAiThinking, winner, executeAiMove],
+		[isAiThinking, winner],
 	);
 
 	const handleStartGamePhase = useCallback(() => {
