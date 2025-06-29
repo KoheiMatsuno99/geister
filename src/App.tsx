@@ -12,6 +12,8 @@ function App() {
 	const {
 		gameState,
 		isAiThinking,
+		winner,
+		winCondition,
 		handleCellClick,
 		handleGhostClick,
 		handleGhostMove,
@@ -110,6 +112,37 @@ function App() {
 				onGhostClick={handleGhostClick}
 				onGhostMove={handleGhostMove}
 			/>
+			{winner && (
+				<div className="game-result-modal">
+					<div className="game-result-content">
+						<h2 className="game-result-title">
+							{winner === "player" ? "You Win!" : "You Lose!"}
+						</h2>
+						<p className="game-result-description">
+							{winCondition === "capture_all_blue" &&
+								"All blue ghosts were captured!"}
+							{winCondition === "lose_all_red" && "All red ghosts were lost!"}
+							{winCondition === "escape" && `A blue ghost escaped to the goal!`}
+						</p>
+						<div className="game-result-actions">
+							<button
+								type="button"
+								onClick={resetGame}
+								className="play-again-button"
+							>
+								Play Again
+							</button>
+							<button
+								type="button"
+								onClick={handleBackToEntrance}
+								className="back-to-menu-button"
+							>
+								Back to Menu
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
