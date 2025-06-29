@@ -61,6 +61,44 @@
 	font-weight: 500;
 }
 
+.captured-ghosts {
+	margin-top: 1rem;
+	text-align: left;
+}
+
+.captured-ghosts h3 {
+	margin: 0 0 0.5rem 0;
+	font-size: 1rem;
+	color: #333;
+}
+
+.captured-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.captured-ghost {
+	background: #f0f0f0;
+	border: 2px solid #ddd;
+	border-radius: 4px;
+	padding: 0.25rem 0.5rem;
+	font-size: 0.8rem;
+	font-weight: 500;
+}
+
+.captured-ghost--blue {
+	border-color: #1976d2;
+	background: #e3f2fd;
+	color: #1976d2;
+}
+
+.captured-ghost--red {
+	border-color: #d32f2f;
+	background: #ffebee;
+	color: #d32f2f;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
 	.game-header {

@@ -43,19 +43,23 @@ export const useGameState = (): UseGameStateResult => {
 	}, []);
 
 	const executeAiMove = useCallback(async () => {
-		console.log("executeAiMove called", {
-			isAiThinking,
-			currentPlayer: gameState.currentPlayer,
-			gamePhase: gameState.gamePhase,
-			winner,
-		});
-
 		if (isAiThinking || gameState.currentPlayer !== "computer" || winner) {
-			console.log("executeAiMove blocked by conditions");
 			return;
 		}
 
-		console.log("Starting AI thinking...");
+		console.log("AI executing move. Current board state:");
+		gameState.board.forEach((row, rowIndex) => {
+			const rowContent = row
+				.map((cell, _colIndex) => {
+					if (cell) {
+						return `${cell.color[0]}${cell.owner[0]}`;
+					}
+					return "--";
+				})
+				.join(" ");
+			console.log(`Row ${rowIndex}: ${rowContent}`);
+		});
+
 		setIsAiThinking(true);
 
 		try {
@@ -77,15 +81,10 @@ export const useGameState = (): UseGameStateResult => {
 			};
 
 			const newGameState = executeMove(gameState, moveWithRevealedGhosts);
-			console.log(
-				"AI move executed, new current player:",
-				newGameState.currentPlayer,
-			);
 			setGameState(newGameState);
 		} catch (error) {
 			console.error("AI move failed:", error);
 		} finally {
-			console.log("AI thinking finished");
 			setIsAiThinking(false);
 		}
 	}, [gameState, difficulty, isAiThinking, winner]);
@@ -99,7 +98,6 @@ export const useGameState = (): UseGameStateResult => {
 			!isAiThinking &&
 			!winner
 		) {
-			console.log("AI flag detected, executing AI move");
 			setShouldExecuteAi(false);
 			setTimeout(() => executeAiMove(), 100);
 		}
@@ -165,7 +163,6 @@ export const useGameState = (): UseGameStateResult => {
 
 							// If it's now computer's turn, schedule AI move
 							if (finalGameState.currentPlayer === "computer") {
-								console.log("Player moved, setting AI trigger");
 								setShouldExecuteAi(true);
 							}
 
@@ -260,7 +257,6 @@ export const useGameState = (): UseGameStateResult => {
 
 					// If it's now computer's turn, schedule AI move
 					if (newGameState.currentPlayer === "computer") {
-						console.log("Player moved (drag&drop), setting AI trigger");
 						setShouldExecuteAi(true);
 					}
 

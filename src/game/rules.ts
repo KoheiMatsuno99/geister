@@ -49,11 +49,39 @@ export const executeMove = (gameState: GameState, move: Move): GameState => {
 		? [...gameState.capturedGhosts, move.capturedGhost]
 		: [...gameState.capturedGhosts];
 
+	// Update the board
 	newBoard[move.from.row][move.from.col] = null;
 	newBoard[move.to.row][move.to.col] = {
 		...move.ghost,
 		position: move.to,
 	};
+
+	// Update ghost positions and revealed status in the ghost arrays
+	const updateGhost = (
+		ghosts: Ghost[],
+		targetGhost: Ghost,
+		newPosition: Position,
+	): Ghost[] => {
+		return ghosts.map((ghost) =>
+			ghost.id === targetGhost.id
+				? {
+						...ghost,
+						position: newPosition,
+						isRevealed: targetGhost.isRevealed,
+					}
+				: ghost,
+		);
+	};
+
+	const newPlayerGhosts =
+		move.ghost.owner === "player"
+			? updateGhost(gameState.playerGhosts, move.ghost, move.to)
+			: gameState.playerGhosts;
+
+	const newComputerGhosts =
+		move.ghost.owner === "computer"
+			? updateGhost(gameState.computerGhosts, move.ghost, move.to)
+			: gameState.computerGhosts;
 
 	const nextPlayer: Player =
 		gameState.currentPlayer === "player" ? "computer" : "player";
@@ -65,6 +93,8 @@ export const executeMove = (gameState: GameState, move: Move): GameState => {
 		selectedPiece: null,
 		moveHistory: [...gameState.moveHistory, move],
 		capturedGhosts: newCapturedGhosts,
+		playerGhosts: newPlayerGhosts,
+		computerGhosts: newComputerGhosts,
 	};
 };
 

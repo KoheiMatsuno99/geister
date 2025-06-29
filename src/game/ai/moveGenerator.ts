@@ -10,19 +10,47 @@ export const generatePossibleMoves = (gameState: GameState): Move[] => {
 			? gameState.playerGhosts
 			: gameState.computerGhosts;
 
-	return currentPlayerGhosts
-		.filter((ghost) => !gameState.capturedGhosts.includes(ghost))
-		.flatMap((ghost) =>
-			getAdjacentPositions(ghost.position)
-				.filter((toPosition) => canMove(gameState, ghost.position, toPosition))
-				.map((toPosition) => ({
+	console.log(`Generating moves for ${gameState.currentPlayer}:`, {
+		ghosts: currentPlayerGhosts.length,
+		capturedGhosts: gameState.capturedGhosts.length,
+	});
+
+	const validGhosts = currentPlayerGhosts.filter(
+		(ghost) => !gameState.capturedGhosts.includes(ghost),
+	);
+	console.log(
+		"Valid ghosts for moves:",
+		validGhosts.map((g) => `${g.id}@(${g.position.row},${g.position.col})`),
+	);
+
+	const moves = validGhosts.flatMap((ghost) => {
+		const adjacentPositions = getAdjacentPositions(ghost.position);
+		const validMoves = adjacentPositions
+			.filter((toPosition) => canMove(gameState, ghost.position, toPosition))
+			.map((toPosition) => {
+				const capturedGhost = gameState.board[toPosition.row][toPosition.col];
+				return {
 					from: ghost.position,
 					to: toPosition,
 					ghost,
-					capturedGhost:
-						gameState.board[toPosition.row][toPosition.col] || undefined,
-				})),
+					capturedGhost: capturedGhost || undefined,
+				};
+			});
+
+		console.log(
+			`Ghost ${ghost.id} at (${ghost.position.row},${ghost.position.col}) can make ${validMoves.length} moves`,
 		);
+		validMoves.forEach((move) => {
+			console.log(
+				`  - Move to (${move.to.row},${move.to.col})${move.capturedGhost ? ` capturing ${move.capturedGhost.color} ${move.capturedGhost.owner}` : ""}`,
+			);
+		});
+
+		return validMoves;
+	});
+
+	console.log(`Total moves generated: ${moves.length}`);
+	return moves;
 };
 
 /**

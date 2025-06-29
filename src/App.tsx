@@ -84,6 +84,21 @@ function App() {
 				{gameState.selectedPiece && (
 					<p>Selected: {gameState.selectedPiece.color} ghost</p>
 				)}
+				{gameState.capturedGhosts.length > 0 && (
+					<div className="captured-ghosts">
+						<h3>Captured Ghosts:</h3>
+						<div className="captured-list">
+							{gameState.capturedGhosts.map((ghost) => (
+								<span
+									key={ghost.id}
+									className={`captured-ghost captured-ghost--${ghost.color}`}
+								>
+									{ghost.color} ({ghost.owner})
+								</span>
+							))}
+						</div>
+					</div>
+				)}
 			</div>
 			<Board
 				gameState={gameState}

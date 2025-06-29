@@ -221,6 +221,141 @@ describe("Game Rules", () => {
 			expect(result.condition).toBe("escape");
 		});
 	});
+
+	describe("executeMove with capture", () => {
+		it("should capture opponent ghost and update ghost arrays", () => {
+			const playerGhost: Ghost = {
+				id: "p1",
+				color: "blue",
+				position: { row: 2, col: 2 },
+				owner: "player",
+				isRevealed: false,
+			};
+
+			const computerGhost: Ghost = {
+				id: "c1",
+				color: "red",
+				position: { row: 1, col: 2 },
+				owner: "computer",
+				isRevealed: false,
+			};
+
+			const board = Array(BOARD_SIZE)
+				.fill(null)
+				.map(() => Array(BOARD_SIZE).fill(null));
+			board[2][2] = playerGhost;
+			board[1][2] = computerGhost;
+
+			const gameState: GameState = {
+				board,
+				currentPlayer: "player",
+				gamePhase: "playing",
+				selectedPiece: null,
+				moveHistory: [],
+				playerGhosts: [playerGhost],
+				computerGhosts: [computerGhost],
+				capturedGhosts: [],
+			};
+
+			const move = {
+				from: { row: 2, col: 2 },
+				to: { row: 1, col: 2 },
+				ghost: { ...playerGhost, isRevealed: true },
+				capturedGhost: { ...computerGhost, isRevealed: true },
+			};
+
+			const newGameState = executeMove(gameState, move);
+
+			// Check that the computer ghost was captured
+			expect(newGameState.capturedGhosts).toHaveLength(1);
+			expect(newGameState.capturedGhosts[0].id).toBe("c1");
+			expect(newGameState.capturedGhosts[0].isRevealed).toBe(true);
+
+			// Check that the player ghost moved and was revealed
+			expect(newGameState.board[1][2]).toEqual({
+				...playerGhost,
+				position: { row: 1, col: 2 },
+				isRevealed: true,
+			});
+			expect(newGameState.board[2][2]).toBeNull();
+
+			// Check that the player ghost in the playerGhosts array was updated
+			expect(newGameState.playerGhosts[0].position).toEqual({ row: 1, col: 2 });
+			expect(newGameState.playerGhosts[0].isRevealed).toBe(true);
+
+			// Check that the computer ghost array is unchanged (captured ghosts remain in original arrays)
+			expect(newGameState.computerGhosts).toHaveLength(1);
+			expect(newGameState.computerGhosts[0].id).toBe("c1");
+		});
+
+		it("should update ghost arrays when computer captures player ghost", () => {
+			const playerGhost: Ghost = {
+				id: "p1",
+				color: "blue",
+				position: { row: 2, col: 2 },
+				owner: "player",
+				isRevealed: false,
+			};
+
+			const computerGhost: Ghost = {
+				id: "c1",
+				color: "red",
+				position: { row: 3, col: 2 },
+				owner: "computer",
+				isRevealed: false,
+			};
+
+			const board = Array(BOARD_SIZE)
+				.fill(null)
+				.map(() => Array(BOARD_SIZE).fill(null));
+			board[2][2] = playerGhost;
+			board[3][2] = computerGhost;
+
+			const gameState: GameState = {
+				board,
+				currentPlayer: "computer",
+				gamePhase: "playing",
+				selectedPiece: null,
+				moveHistory: [],
+				playerGhosts: [playerGhost],
+				computerGhosts: [computerGhost],
+				capturedGhosts: [],
+			};
+
+			const move = {
+				from: { row: 3, col: 2 },
+				to: { row: 2, col: 2 },
+				ghost: { ...computerGhost, isRevealed: true },
+				capturedGhost: { ...playerGhost, isRevealed: true },
+			};
+
+			const newGameState = executeMove(gameState, move);
+
+			// Check that the player ghost was captured
+			expect(newGameState.capturedGhosts).toHaveLength(1);
+			expect(newGameState.capturedGhosts[0].id).toBe("p1");
+			expect(newGameState.capturedGhosts[0].isRevealed).toBe(true);
+
+			// Check that the computer ghost moved and was revealed
+			expect(newGameState.board[2][2]).toEqual({
+				...computerGhost,
+				position: { row: 2, col: 2 },
+				isRevealed: true,
+			});
+			expect(newGameState.board[3][2]).toBeNull();
+
+			// Check that the computer ghost in the computerGhosts array was updated
+			expect(newGameState.computerGhosts[0].position).toEqual({
+				row: 2,
+				col: 2,
+			});
+			expect(newGameState.computerGhosts[0].isRevealed).toBe(true);
+
+			// Check that the player ghost array is unchanged (captured ghosts remain in original arrays)
+			expect(newGameState.playerGhosts).toHaveLength(1);
+			expect(newGameState.playerGhosts[0].id).toBe("p1");
+		});
+	});
 });
 
 function createTestGameState(): GameState {
