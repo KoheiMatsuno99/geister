@@ -123,11 +123,11 @@
 }
 
 .setup-board {
-	background: rgba(255, 255, 255, 0.1);
-	border-radius: 12px;
-	padding: 1.5rem;
-	backdrop-filter: blur(10px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	background-color: #8b4513;
+	border: 2px solid #654321;
+	border-radius: 8px;
+	padding: 16px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .board-grid {
@@ -144,8 +144,8 @@
 .setup-cell {
 	width: 60px;
 	height: 60px;
-	border: 1px solid rgba(255, 255, 255, 0.3);
-	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid #ddd;
+	background-color: #f5f5dc;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -157,17 +157,27 @@
 	touch-action: manipulation;
 }
 
+.setup-cell:hover {
+	background-color: #e6e6d4;
+	transform: scale(1.05);
+}
+
+.setup-cell:focus {
+	outline: 2px solid #007acc;
+	outline-offset: 2px;
+}
+
 .setup-cell--valid {
-	background: rgba(76, 175, 80, 0.3);
-	border-color: #4caf50;
+	background-color: #c8e6c9;
+	border: 2px dashed #4caf50;
 }
 
 .setup-cell--occupied {
-	background: rgba(255, 255, 255, 0.4);
+	background-color: #f0f0f0;
 }
 
 .setup-cell--drop-target {
-	background: rgba(33, 150, 243, 0.5);
+	background-color: #e3f2fd;
 	border: 2px solid #2196f3;
 	box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
 }
@@ -192,6 +202,94 @@
 
 .placed-ghost-image--computer {
 	transform: rotate(180deg);
+}
+
+/* Large desktop screens */
+@media (min-width: 1440px) {
+	.setup-board {
+		padding: 24px;
+	}
+
+	.setup-cell {
+		width: 80px;
+		height: 80px;
+	}
+
+	.placed-ghost-image {
+		width: 70px;
+		height: 70px;
+	}
+}
+
+/* Standard desktop and large tablets */
+@media (min-width: 1024px) and (max-width: 1439px) {
+	.setup-board {
+		padding: 20px;
+	}
+
+	.setup-cell {
+		width: 70px;
+		height: 70px;
+	}
+
+	.placed-ghost-image {
+		width: 60px;
+		height: 60px;
+	}
+}
+
+/* iPad and medium tablets */
+@media (min-width: 769px) and (max-width: 1023px) {
+	.setup-board {
+		padding: 18px;
+	}
+
+	.setup-cell {
+		width: 65px;
+		height: 65px;
+	}
+
+	.placed-ghost-image {
+		width: 55px;
+		height: 55px;
+	}
+}
+
+/* Mobile and small tablets */
+@media (max-width: 768px) {
+	.setup-cell {
+		width: 50px;
+		height: 50px;
+		min-width: 44px;
+		min-height: 44px;
+	}
+
+	.placed-ghost-image {
+		width: 38px;
+		height: 38px;
+	}
+
+	.setup-board {
+		padding: 12px;
+	}
+}
+
+@media (max-width: 480px) {
+	.setup-cell {
+		width: 45px;
+		height: 45px;
+		min-width: 44px;
+		min-height: 44px;
+	}
+
+	.placed-ghost-image {
+		width: 34px;
+		height: 34px;
+	}
+
+	.setup-board {
+		padding: 8px;
+	}
 }
 
 .setup-actions {
