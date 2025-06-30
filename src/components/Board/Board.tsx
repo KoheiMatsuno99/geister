@@ -196,9 +196,14 @@ export const Board = memo(
 			const position: Position = { row, col };
 			const ghost = gameState.board[row][col];
 
-			if (ghost) {
+			// If we have a selected piece, try to move there regardless of what's on the target cell
+			if (gameState.selectedPiece) {
+				onCellClick(position);
+			} else if (ghost) {
+				// Only handle ghost click if no piece is selected
 				onGhostClick(ghost);
 			} else {
+				// Empty cell with no selected piece
 				onCellClick(position);
 			}
 		};
