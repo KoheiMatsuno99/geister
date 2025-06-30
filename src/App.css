@@ -48,7 +48,8 @@ body {
 }
 
 .back-button,
-.reset-button {
+.reset-button,
+.rules-button {
 	background: rgba(255, 255, 255, 0.2);
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	border-radius: 8px;
@@ -60,7 +61,8 @@ body {
 }
 
 .back-button:hover,
-.reset-button:hover {
+.reset-button:hover,
+.rules-button:hover {
 	background: rgba(255, 255, 255, 0.3);
 	transform: translateY(-1px);
 }

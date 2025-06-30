@@ -4,9 +4,10 @@ import "./Entrance.css";
 
 export interface EntranceProps {
 	onStartGame: () => void;
+	onShowRules: () => void;
 }
 
-export const Entrance = memo(({ onStartGame }: EntranceProps) => {
+export const Entrance = memo(({ onStartGame, onShowRules }: EntranceProps) => {
 	return (
 		<div
 			className="entrance"
@@ -16,13 +17,22 @@ export const Entrance = memo(({ onStartGame }: EntranceProps) => {
 				<div className="entrance-content">
 					<h1 className="entrance-title">Geister</h1>
 					<p className="entrance-subtitle">Strategic Ghost Battle Game</p>
-					<button
-						type="button"
-						className="entrance-start-button"
-						onClick={onStartGame}
-					>
-						Start Game
-					</button>
+					<div className="entrance-buttons">
+						<button
+							type="button"
+							className="entrance-start-button"
+							onClick={onStartGame}
+						>
+							Start Game
+						</button>
+						<button
+							type="button"
+							className="entrance-rules-button"
+							onClick={onShowRules}
+						>
+							Game Rules
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
