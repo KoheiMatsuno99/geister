@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { GameState, Ghost, Position } from "../types/game";
 import {
+	createInitialGameState,
+	placePlayerGhost,
+	startGamePhase,
+} from "./gameInit";
+import {
 	BOARD_SIZE,
 	canMove,
 	checkWinCondition,
@@ -175,6 +180,198 @@ describe("Game Rules", () => {
 
 			const result = checkWinCondition(gameState);
 			expect(result.winner).toBe("computer");
+			expect(result.condition).toBe("capture_all_blue");
+		});
+
+		it("should detect win by player capturing all computer blue ghosts", () => {
+			// Create a realistic game state with 4 blue and 4 red ghosts for each player
+			const playerBlueGhosts: Ghost[] = [
+				{
+					id: "p1",
+					color: "blue",
+					position: { row: 4, col: 1 },
+					owner: "player",
+					isRevealed: false,
+				},
+				{
+					id: "p2",
+					color: "blue",
+					position: { row: 4, col: 2 },
+					owner: "player",
+					isRevealed: false,
+				},
+				{
+					id: "p3",
+					color: "blue",
+					position: { row: 4, col: 3 },
+					owner: "player",
+					isRevealed: false,
+				},
+				{
+					id: "p4",
+					color: "blue",
+					position: { row: 4, col: 4 },
+					owner: "player",
+					isRevealed: false,
+				},
+			];
+			const playerRedGhosts: Ghost[] = [
+				{
+					id: "p5",
+					color: "red",
+					position: { row: 5, col: 1 },
+					owner: "player",
+					isRevealed: false,
+				},
+				{
+					id: "p6",
+					color: "red",
+					position: { row: 5, col: 2 },
+					owner: "player",
+					isRevealed: false,
+				},
+				{
+					id: "p7",
+					color: "red",
+					position: { row: 5, col: 3 },
+					owner: "player",
+					isRevealed: false,
+				},
+				{
+					id: "p8",
+					color: "red",
+					position: { row: 5, col: 4 },
+					owner: "player",
+					isRevealed: false,
+				},
+			];
+			const computerBlueGhosts: Ghost[] = [
+				{
+					id: "c1",
+					color: "blue",
+					position: { row: 0, col: 1 },
+					owner: "computer",
+					isRevealed: false,
+				},
+				{
+					id: "c2",
+					color: "blue",
+					position: { row: 0, col: 2 },
+					owner: "computer",
+					isRevealed: false,
+				},
+				{
+					id: "c3",
+					color: "blue",
+					position: { row: 0, col: 3 },
+					owner: "computer",
+					isRevealed: false,
+				},
+				{
+					id: "c4",
+					color: "blue",
+					position: { row: 0, col: 4 },
+					owner: "computer",
+					isRevealed: false,
+				},
+			];
+			const computerRedGhosts: Ghost[] = [
+				{
+					id: "c5",
+					color: "red",
+					position: { row: 1, col: 1 },
+					owner: "computer",
+					isRevealed: false,
+				},
+				{
+					id: "c6",
+					color: "red",
+					position: { row: 1, col: 2 },
+					owner: "computer",
+					isRevealed: false,
+				},
+				{
+					id: "c7",
+					color: "red",
+					position: { row: 1, col: 3 },
+					owner: "computer",
+					isRevealed: false,
+				},
+				{
+					id: "c8",
+					color: "red",
+					position: { row: 1, col: 4 },
+					owner: "computer",
+					isRevealed: false,
+				},
+			];
+
+			const board = Array(BOARD_SIZE)
+				.fill(null)
+				.map(() => Array(BOARD_SIZE).fill(null));
+
+			// Place all ghosts on board
+			[
+				...playerBlueGhosts,
+				...playerRedGhosts,
+				...computerBlueGhosts,
+				...computerRedGhosts,
+			].forEach((ghost) => {
+				board[ghost.position.row][ghost.position.col] = ghost;
+			});
+
+			const gameState: GameState = {
+				board,
+				currentPlayer: "player",
+				gamePhase: "playing",
+				selectedPiece: null,
+				moveHistory: [],
+				playerGhosts: [...playerBlueGhosts, ...playerRedGhosts],
+				computerGhosts: [...computerBlueGhosts, ...computerRedGhosts],
+				capturedGhosts: [...computerBlueGhosts], // Player captured all computer blue ghosts
+			};
+
+			const result = checkWinCondition(gameState);
+			expect(result.winner).toBe("player");
+			expect(result.condition).toBe("capture_all_blue");
+		});
+
+		it("should detect win using real game initialization", () => {
+			// Test with actual game initialization
+			let gameState = createInitialGameState();
+
+			// Place all player ghosts
+			const playerPositions = [
+				{ row: 4, col: 1 },
+				{ row: 4, col: 2 },
+				{ row: 4, col: 3 },
+				{ row: 4, col: 4 },
+				{ row: 5, col: 1 },
+				{ row: 5, col: 2 },
+				{ row: 5, col: 3 },
+				{ row: 5, col: 4 },
+			];
+
+			gameState.playerGhosts.forEach((ghost, index) => {
+				gameState = placePlayerGhost(gameState, ghost, playerPositions[index]);
+			});
+
+			// Start the game phase
+			gameState = startGamePhase(gameState);
+
+			// Simulate capturing all computer blue ghosts
+			const computerBlueGhosts = gameState.computerGhosts.filter(
+				(g) => g.color === "blue",
+			);
+
+			// Add them to captured ghosts
+			gameState = {
+				...gameState,
+				capturedGhosts: [...computerBlueGhosts],
+			};
+
+			const result = checkWinCondition(gameState);
+			expect(result.winner).toBe("player");
 			expect(result.condition).toBe("capture_all_blue");
 		});
 

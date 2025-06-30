@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { createInitialGameState } from "../../game/gameInit";
-import type { Position } from "../../types/game";
+import {
+	createInitialGameState,
+	placePlayerGhost,
+	startGamePhase,
+} from "../../game/gameInit";
+import type { GameState, Position } from "../../types/game";
 
 // Component will be implemented after tests
 describe("Board Component", () => {
@@ -14,7 +18,7 @@ describe("Board Component", () => {
 		});
 
 		it("should display ghosts in correct positions", () => {
-			const gameState = createInitialGameState();
+			const gameState = createPlayingGameState();
 
 			// Player ghosts should be in rows 4-5
 			const playerGhostPositions = gameState.playerGhosts.map(
@@ -75,10 +79,10 @@ describe("Board Component", () => {
 		});
 
 		it("should distinguish between revealed and unrevealed ghosts", () => {
-			const gameState = createInitialGameState();
+			const gameState = createPlayingGameState();
 			const ghost = gameState.playerGhosts[0];
 
-			// Initially all ghosts should be unrevealed
+			// In playing phase, all ghosts should be unrevealed
 			expect(ghost.isRevealed).toBe(false);
 		});
 	});
@@ -97,3 +101,29 @@ describe("Board Component", () => {
 		});
 	});
 });
+
+// Helper function to create a game state in playing phase
+function createPlayingGameState(): GameState {
+	let gameState = createInitialGameState();
+
+	// Place all player ghosts in valid positions
+	const playerPositions = [
+		{ row: 4, col: 1 },
+		{ row: 4, col: 2 },
+		{ row: 4, col: 3 },
+		{ row: 4, col: 4 },
+		{ row: 5, col: 1 },
+		{ row: 5, col: 2 },
+		{ row: 5, col: 3 },
+		{ row: 5, col: 4 },
+	];
+
+	gameState.playerGhosts.forEach((ghost, index) => {
+		gameState = placePlayerGhost(gameState, ghost, playerPositions[index]);
+	});
+
+	// Start the game phase to transition to playing
+	gameState = startGamePhase(gameState);
+
+	return gameState;
+}

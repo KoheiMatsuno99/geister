@@ -118,10 +118,14 @@ export const checkWinCondition = (
 };
 
 const checkEscapeCondition = (gameState: GameState) => {
+	const capturedGhostIds = new Set(
+		gameState.capturedGhosts.map((ghost) => ghost.id),
+	);
+
 	const isEscapedGhost = (ghost: Ghost, player: Player) =>
 		ghost.color === "blue" &&
 		isEscapeSquare(ghost.position, player) &&
-		!gameState.capturedGhosts.includes(ghost);
+		!capturedGhostIds.has(ghost.id);
 
 	const playerEscaped = gameState.playerGhosts.some((ghost) =>
 		isEscapedGhost(ghost, "player"),
@@ -139,10 +143,13 @@ const checkEscapeCondition = (gameState: GameState) => {
 };
 
 const checkCaptureCondition = (gameState: GameState) => {
+	const capturedGhostIds = new Set(
+		gameState.capturedGhosts.map((ghost) => ghost.id),
+	);
+
 	const countActiveGhosts = (ghosts: Ghost[], color: GhostColor) =>
 		ghosts.filter(
-			(ghost) =>
-				ghost.color === color && !gameState.capturedGhosts.includes(ghost),
+			(ghost) => ghost.color === color && !capturedGhostIds.has(ghost.id),
 		).length;
 
 	const playerBlueCount = countActiveGhosts(gameState.playerGhosts, "blue");
@@ -165,10 +172,13 @@ const checkCaptureCondition = (gameState: GameState) => {
 };
 
 const checkRedLossCondition = (gameState: GameState) => {
+	const capturedGhostIds = new Set(
+		gameState.capturedGhosts.map((ghost) => ghost.id),
+	);
+
 	const countActiveGhosts = (ghosts: Ghost[], color: GhostColor) =>
 		ghosts.filter(
-			(ghost) =>
-				ghost.color === color && !gameState.capturedGhosts.includes(ghost),
+			(ghost) => ghost.color === color && !capturedGhostIds.has(ghost.id),
 		).length;
 
 	const playerRedCount = countActiveGhosts(gameState.playerGhosts, "red");

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createInitialGameState } from "./gameInit";
+import type { GameState } from "../types/game";
+import {
+	createInitialGameState,
+	placePlayerGhost,
+	startGamePhase,
+} from "./gameInit";
 
 describe("gameInit", () => {
 	describe("createInitialGameState", () => {
@@ -7,7 +12,7 @@ describe("gameInit", () => {
 			const gameState = createInitialGameState();
 
 			expect(gameState.currentPlayer).toBe("player");
-			expect(gameState.gamePhase).toBe("playing");
+			expect(gameState.gamePhase).toBe("setup");
 			expect(gameState.selectedPiece).toBeNull();
 			expect(gameState.moveHistory).toHaveLength(0);
 			expect(gameState.capturedGhosts).toHaveLength(0);
@@ -43,13 +48,14 @@ describe("gameInit", () => {
 			expect(redGhosts).toHaveLength(4);
 		});
 
-		it("should place player ghosts in rows 4-5", () => {
+		it("should have unplaced player ghosts in setup phase", () => {
 			const gameState = createInitialGameState();
 
+			// Player ghosts should have invalid positions in setup phase
 			const playerRows = gameState.playerGhosts.map((g) => g.position.row);
-			const validRows = playerRows.every((row) => row === 4 || row === 5);
+			const allUnplaced = playerRows.every((row) => row === -1);
 
-			expect(validRows).toBe(true);
+			expect(allUnplaced).toBe(true);
 		});
 
 		it("should place computer ghosts in rows 0-1", () => {
@@ -61,34 +67,39 @@ describe("gameInit", () => {
 			expect(validRows).toBe(true);
 		});
 
-		it("should place ghosts in columns 1-4", () => {
+		it("should place computer ghosts in columns 1-4", () => {
 			const gameState = createInitialGameState();
 
-			const allGhosts = [
-				...gameState.playerGhosts,
-				...gameState.computerGhosts,
-			];
-			const columns = allGhosts.map((g) => g.position.col);
-			const validColumns = columns.every((col) => col >= 1 && col <= 4);
+			// Only check computer ghosts since player ghosts are unplaced
+			const computerColumns = gameState.computerGhosts.map(
+				(g) => g.position.col,
+			);
+			const validColumns = computerColumns.every((col) => col >= 1 && col <= 4);
 
 			expect(validColumns).toBe(true);
 		});
 
-		it("should create board with ghosts placed correctly", () => {
+		it("should create board with only computer ghosts placed", () => {
 			const gameState = createInitialGameState();
 
-			// Check that all ghost positions match board state
-			gameState.playerGhosts.forEach((ghost) => {
-				const boardGhost =
-					gameState.board[ghost.position.row][ghost.position.col];
-				expect(boardGhost).toEqual(ghost);
-			});
-
+			// Only computer ghosts should be on the board in setup phase
 			gameState.computerGhosts.forEach((ghost) => {
 				const boardGhost =
 					gameState.board[ghost.position.row][ghost.position.col];
 				expect(boardGhost).toEqual(ghost);
 			});
+
+			// Player ghosts should not be on the board yet
+			let playerGhostsOnBoard = 0;
+			for (let row = 0; row < 6; row++) {
+				for (let col = 0; col < 6; col++) {
+					const cell = gameState.board[row][col];
+					if (cell && cell.owner === "player") {
+						playerGhostsOnBoard++;
+					}
+				}
+			}
+			expect(playerGhostsOnBoard).toBe(0);
 		});
 
 		it("should create board with empty cells in middle", () => {
@@ -133,9 +144,35 @@ describe("gameInit", () => {
 			});
 		});
 
-		it("should create ghosts that are not revealed initially", () => {
+		it("should have player ghosts revealed in setup phase", () => {
 			const gameState = createInitialGameState();
 
+			// Player ghosts should be revealed during setup
+			gameState.playerGhosts.forEach((ghost) => {
+				expect(ghost.isRevealed).toBe(true);
+			});
+
+			// Computer ghosts should not be revealed
+			gameState.computerGhosts.forEach((ghost) => {
+				expect(ghost.isRevealed).toBe(false);
+			});
+		});
+	});
+
+	describe("playing phase transition", () => {
+		it("should place player ghosts in rows 4-5 after setup", () => {
+			const gameState = createPlayingGameState();
+
+			const playerRows = gameState.playerGhosts.map((g) => g.position.row);
+			const validRows = playerRows.every((row) => row === 4 || row === 5);
+
+			expect(validRows).toBe(true);
+		});
+
+		it("should hide player ghosts after setup", () => {
+			const gameState = createPlayingGameState();
+
+			// All ghosts should be hidden in playing phase
 			const allGhosts = [
 				...gameState.playerGhosts,
 				...gameState.computerGhosts,
@@ -144,5 +181,46 @@ describe("gameInit", () => {
 				expect(ghost.isRevealed).toBe(false);
 			});
 		});
+
+		it("should have all ghosts on board in playing phase", () => {
+			const gameState = createPlayingGameState();
+
+			// All ghosts should be on the board
+			const allGhosts = [
+				...gameState.playerGhosts,
+				...gameState.computerGhosts,
+			];
+			allGhosts.forEach((ghost) => {
+				const boardGhost =
+					gameState.board[ghost.position.row][ghost.position.col];
+				expect(boardGhost).toEqual(ghost);
+			});
+		});
 	});
 });
+
+// Helper function to create a game state in playing phase
+function createPlayingGameState(): GameState {
+	let gameState = createInitialGameState();
+
+	// Place all player ghosts in valid positions
+	const playerPositions = [
+		{ row: 4, col: 1 },
+		{ row: 4, col: 2 },
+		{ row: 4, col: 3 },
+		{ row: 4, col: 4 },
+		{ row: 5, col: 1 },
+		{ row: 5, col: 2 },
+		{ row: 5, col: 3 },
+		{ row: 5, col: 4 },
+	];
+
+	gameState.playerGhosts.forEach((ghost, index) => {
+		gameState = placePlayerGhost(gameState, ghost, playerPositions[index]);
+	});
+
+	// Start the game phase to transition to playing
+	gameState = startGamePhase(gameState);
+
+	return gameState;
+}

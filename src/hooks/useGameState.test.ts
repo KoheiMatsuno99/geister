@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { createInitialGameState } from "../game/gameInit";
+import {
+	createInitialGameState,
+	placePlayerGhost,
+	startGamePhase,
+} from "../game/gameInit";
 import { canMove } from "../game/rules";
+import type { GameState } from "../types/game";
 
 // Mock the AI engine to avoid async complexity in tests
 vi.mock("../game/ai/engine", () => ({
@@ -24,7 +29,7 @@ describe("useGameState logic", () => {
 			const gameState = createInitialGameState();
 
 			expect(gameState.currentPlayer).toBe("player");
-			expect(gameState.gamePhase).toBe("playing");
+			expect(gameState.gamePhase).toBe("setup");
 			expect(gameState.selectedPiece).toBeNull();
 			expect(gameState.moveHistory).toHaveLength(0);
 			expect(gameState.capturedGhosts).toHaveLength(0);
@@ -35,7 +40,8 @@ describe("useGameState logic", () => {
 
 	describe("move validation", () => {
 		it("should validate moves correctly", () => {
-			const gameState = createInitialGameState();
+			// Create a game state in playing phase
+			const gameState = createPlayingGameState();
 
 			// Test valid move
 			const playerGhost = gameState.playerGhosts.find(
@@ -94,7 +100,7 @@ describe("useGameState logic", () => {
 
 	describe("ghost placement", () => {
 		it("should place ghosts in correct starting positions", () => {
-			const gameState = createInitialGameState();
+			const gameState = createPlayingGameState();
 
 			// Player ghosts should be in rows 4-5
 			const playerRows = gameState.playerGhosts.map((g) => g.position.row);
@@ -114,7 +120,7 @@ describe("useGameState logic", () => {
 		});
 
 		it("should place ghosts on board correctly", () => {
-			const gameState = createInitialGameState();
+			const gameState = createPlayingGameState();
 
 			// Verify board matches ghost positions
 			gameState.playerGhosts.forEach((ghost) => {
@@ -165,8 +171,8 @@ describe("useGameState logic", () => {
 			expect(uniqueIds.size).toBe(allGhosts.length);
 		});
 
-		it("should initialize ghosts as not revealed", () => {
-			const gameState = createInitialGameState();
+		it("should initialize ghosts as not revealed in playing phase", () => {
+			const gameState = createPlayingGameState();
 
 			const allGhosts = [
 				...gameState.playerGhosts,
@@ -176,5 +182,45 @@ describe("useGameState logic", () => {
 				expect(ghost.isRevealed).toBe(false);
 			});
 		});
+
+		it("should have player ghosts revealed during setup phase", () => {
+			const gameState = createInitialGameState();
+
+			// Player ghosts should be revealed during setup
+			gameState.playerGhosts.forEach((ghost) => {
+				expect(ghost.isRevealed).toBe(true);
+			});
+
+			// Computer ghosts should not be revealed
+			gameState.computerGhosts.forEach((ghost) => {
+				expect(ghost.isRevealed).toBe(false);
+			});
+		});
 	});
 });
+
+// Helper function to create a game state in playing phase with all ghosts placed
+function createPlayingGameState(): GameState {
+	let gameState = createInitialGameState();
+
+	// Place all player ghosts in valid positions
+	const playerPositions = [
+		{ row: 4, col: 1 },
+		{ row: 4, col: 2 },
+		{ row: 4, col: 3 },
+		{ row: 4, col: 4 },
+		{ row: 5, col: 1 },
+		{ row: 5, col: 2 },
+		{ row: 5, col: 3 },
+		{ row: 5, col: 4 },
+	];
+
+	gameState.playerGhosts.forEach((ghost, index) => {
+		gameState = placePlayerGhost(gameState, ghost, playerPositions[index]);
+	});
+
+	// Start the game phase to transition to playing
+	gameState = startGamePhase(gameState);
+
+	return gameState;
+}

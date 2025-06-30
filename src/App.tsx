@@ -1,11 +1,44 @@
 import { useState } from "react";
+import blueGhostImg from "./assets/blueGhost.jpeg";
+import redGhostImg from "./assets/redGhost.jpeg";
+import unknownGhostImg from "./assets/unknownGhost.jpeg";
 import { Board } from "./components/Board/Board";
 import { Entrance } from "./components/Entrance/Entrance";
 import { GhostSetup } from "./components/GhostSetup/GhostSetup";
 import { useGameState } from "./hooks/useGameState";
+import type { Ghost } from "./types/game";
 import "./App.css";
 
 type GameScreen = "entrance" | "game";
+
+interface CapturedGhostDisplayProps {
+	ghost: Ghost;
+	isPlayerCaptured: boolean;
+}
+
+const CapturedGhostDisplay = ({
+	ghost,
+	isPlayerCaptured,
+}: CapturedGhostDisplayProps) => {
+	const getGhostImage = () => {
+		if (!ghost.isRevealed) {
+			return unknownGhostImg;
+		}
+		return ghost.color === "blue" ? blueGhostImg : redGhostImg;
+	};
+
+	return (
+		<div
+			className={`captured-ghost-display ${isPlayerCaptured ? "captured-ghost-display--player" : "captured-ghost-display--computer"}`}
+		>
+			<img
+				src={getGhostImage()}
+				alt={ghost.isRevealed ? `${ghost.color} ghost` : "Unknown ghost"}
+				className={`captured-ghost-image ${ghost.owner === "computer" ? "captured-ghost-image--computer" : ""}`}
+			/>
+		</div>
+	);
+};
 
 function App() {
 	const [currentScreen, setCurrentScreen] = useState<GameScreen>("entrance");
@@ -21,6 +54,14 @@ function App() {
 		handleStartGamePhase,
 		resetGame,
 	} = useGameState();
+
+	// Separate captured ghosts by who captured them
+	const playerCapturedGhosts = gameState.capturedGhosts.filter(
+		(ghost) => ghost.owner === "computer",
+	);
+	const computerCapturedGhosts = gameState.capturedGhosts.filter(
+		(ghost) => ghost.owner === "player",
+	);
 
 	const handleStartGame = () => {
 		resetGame();
@@ -86,32 +127,36 @@ function App() {
 				{gameState.selectedPiece && (
 					<p>Selected: {gameState.selectedPiece.color} ghost</p>
 				)}
-				{gameState.capturedGhosts.length > 0 && (
-					<div className="captured-ghosts">
-						<h3>Captured Ghosts:</h3>
-						<div className="captured-list">
-							{gameState.capturedGhosts.map((ghost) => (
-								<span
-									key={ghost.id}
-									className={`captured-ghost ${
-										ghost.isRevealed
-											? `captured-ghost--${ghost.color}`
-											: "captured-ghost--unknown"
-									}`}
-								>
-									{ghost.isRevealed ? ghost.color : "?"} ({ghost.owner})
-								</span>
-							))}
-						</div>
-					</div>
-				)}
 			</div>
+
+			{/* Computer captured ghosts - displayed above the board */}
+			<div className="captured-ghosts-top">
+				{computerCapturedGhosts.map((ghost) => (
+					<CapturedGhostDisplay
+						key={ghost.id}
+						ghost={ghost}
+						isPlayerCaptured={false}
+					/>
+				))}
+			</div>
+
 			<Board
 				gameState={gameState}
 				onCellClick={handleCellClick}
 				onGhostClick={handleGhostClick}
 				onGhostMove={handleGhostMove}
 			/>
+
+			{/* Player captured ghosts - displayed below the board */}
+			<div className="captured-ghosts-bottom">
+				{playerCapturedGhosts.map((ghost) => (
+					<CapturedGhostDisplay
+						key={ghost.id}
+						ghost={ghost}
+						isPlayerCaptured={true}
+					/>
+				))}
+			</div>
 			{winner && (
 				<div className="game-result-modal">
 					<div className="game-result-content">
