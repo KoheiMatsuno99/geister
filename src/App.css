@@ -137,7 +137,7 @@ body {
 	object-fit: cover;
 }
 
-.captured-ghost-image--computer {
+.captured-ghost-image--flipped {
 	transform: rotate(180deg);
 }
 

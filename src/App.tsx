@@ -34,7 +34,7 @@ const CapturedGhostDisplay = ({
 			<img
 				src={getGhostImage()}
 				alt={ghost.isRevealed ? `${ghost.color} ghost` : "Unknown ghost"}
-				className={`captured-ghost-image ${ghost.owner === "computer" ? "captured-ghost-image--computer" : ""}`}
+				className={`captured-ghost-image ${!isPlayerCaptured ? "captured-ghost-image--flipped" : ""}`}
 			/>
 		</div>
 	);
