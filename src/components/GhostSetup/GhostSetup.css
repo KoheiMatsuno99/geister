@@ -431,13 +431,13 @@
 	}
 
 	.placed-ghost-image {
-		width: 32px;
-		height: 32px;
+		width: 38px;
+		height: 38px;
 	}
 
 	.ghost-item-image {
-		width: 32px;
-		height: 32px;
+		width: 38px;
+		height: 38px;
 	}
 
 	.placed-ghost-image--computer {
@@ -473,8 +473,8 @@
 	}
 
 	.placed-ghost-image {
-		width: 28px;
-		height: 28px;
+		width: 34px;
+		height: 34px;
 	}
 
 	.placed-ghost-image--computer {
@@ -482,8 +482,8 @@
 	}
 
 	.ghost-item-image {
-		width: 28px;
-		height: 28px;
+		width: 34px;
+		height: 34px;
 	}
 
 	.start-game-button {
