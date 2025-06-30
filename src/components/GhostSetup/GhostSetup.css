@@ -61,10 +61,32 @@
 	width: 55px;
 	height: 55px;
 	background: rgba(255, 255, 255, 0.2);
+	border: 2px solid rgba(255, 255, 255, 0.3);
 	border-radius: 8px;
 	cursor: grab;
 	transition: all 0.2s ease;
 	user-select: none;
+	touch-action: manipulation;
+	padding: 0;
+	font-family: inherit;
+}
+
+.ghost-item--selected {
+	border-color: #ff9800;
+	box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+	animation: selectedPulse 2s infinite;
+}
+
+@keyframes selectedPulse {
+	0% {
+		box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+	}
+	50% {
+		box-shadow: 0 0 20px rgba(255, 152, 0, 1);
+	}
+	100% {
+		box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+	}
 }
 
 .ghost-item:hover {
@@ -84,6 +106,8 @@
 	height: 50px;
 	border-radius: 50%;
 	object-fit: cover;
+	pointer-events: none;
+	user-select: none;
 }
 
 .ghost-item-label {
@@ -127,6 +151,10 @@
 	justify-content: center;
 	position: relative;
 	transition: all 0.2s ease;
+	cursor: pointer;
+	padding: 0;
+	font-family: inherit;
+	touch-action: manipulation;
 }
 
 .setup-cell--valid {
@@ -158,6 +186,8 @@
 	border-radius: 50%;
 	object-fit: cover;
 	border: 2px solid rgba(255, 255, 255, 0.8);
+	pointer-events: none;
+	user-select: none;
 }
 
 .placed-ghost-image--computer {

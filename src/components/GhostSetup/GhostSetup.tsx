@@ -28,42 +28,51 @@ export interface GhostSetupProps {
 
 interface DraggableGhostItemProps {
 	ghost: Ghost;
+	isSelected: boolean;
+	onGhostClick: (ghost: Ghost) => void;
 }
 
-const DraggableGhostItem = memo(({ ghost }: DraggableGhostItemProps) => {
-	const { attributes, listeners, setNodeRef, transform, isDragging } =
-		useDraggable({
-			id: `unplaced-ghost-${ghost.id}`,
-			data: ghost,
-		});
+const DraggableGhostItem = memo(
+	({ ghost, isSelected, onGhostClick }: DraggableGhostItemProps) => {
+		const { attributes, listeners, setNodeRef, transform, isDragging } =
+			useDraggable({
+				id: `unplaced-ghost-${ghost.id}`,
+				data: ghost,
+			});
 
-	const style = transform
-		? {
-				transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-			}
-		: undefined;
+		const style = transform
+			? {
+					transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+				}
+			: undefined;
 
-	if (ghost.position.row >= 0) {
-		// Ghost is already placed, don't show in list
-		return null;
-	}
+		if (ghost.position.row >= 0) {
+			// Ghost is already placed, don't show in list
+			return null;
+		}
 
-	return (
-		<div
-			ref={setNodeRef}
-			style={style}
-			className={`ghost-item ${isDragging ? "ghost-item--dragging" : ""}`}
-			{...listeners}
-			{...attributes}
-		>
-			<img
-				src={ghost.color === "blue" ? blueGhostImg : redGhostImg}
-				alt={`${ghost.color} ghost`}
-				className="ghost-item-image"
-			/>
-		</div>
-	);
-});
+		return (
+			<button
+				ref={setNodeRef}
+				type="button"
+				style={style}
+				className={`ghost-item ${isDragging ? "ghost-item--dragging" : ""} ${isSelected ? "ghost-item--selected" : ""}`}
+				onClick={(e) => {
+					e.stopPropagation();
+					onGhostClick(ghost);
+				}}
+				{...listeners}
+				{...attributes}
+			>
+				<img
+					src={ghost.color === "blue" ? blueGhostImg : redGhostImg}
+					alt={`${ghost.color} ghost`}
+					className="ghost-item-image"
+				/>
+			</button>
+		);
+	},
+);
 
 DraggableGhostItem.displayName = "DraggableGhostItem";
 
@@ -72,10 +81,17 @@ interface DroppableSetupCellProps {
 	col: number;
 	ghost: Ghost | null;
 	isValidPlacement: boolean;
+	onCellClick: (row: number, col: number) => void;
 }
 
 const DroppableSetupCell = memo(
-	({ row, col, ghost, isValidPlacement }: DroppableSetupCellProps) => {
+	({
+		row,
+		col,
+		ghost,
+		isValidPlacement,
+		onCellClick,
+	}: DroppableSetupCellProps) => {
 		const { isOver, setNodeRef } = useDroppable({
 			id: `setup-cell-${row}-${col}`,
 		});
@@ -90,10 +106,13 @@ const DroppableSetupCell = memo(
 			.join(" ");
 
 		return (
-			<div
+			<button
 				ref={setNodeRef}
+				type="button"
 				className={cellClasses}
+				onClick={() => onCellClick(row, col)}
 				data-testid={`setup-cell-${row}-${col}`}
+				aria-label={`Setup cell at row ${row + 1}, column ${col + 1}${ghost ? `, contains ${ghost.owner} ghost` : ""}${isValidPlacement ? ", valid placement area" : ""}`}
 			>
 				{ghost && (
 					<div className="placed-ghost">
@@ -114,7 +133,7 @@ const DroppableSetupCell = memo(
 						/>
 					</div>
 				)}
-			</div>
+			</button>
 		);
 	},
 );
@@ -124,6 +143,7 @@ DroppableSetupCell.displayName = "DroppableSetupCell";
 export const GhostSetup = memo(
 	({ gameState, onPlaceGhost, onStartGame }: GhostSetupProps) => {
 		const [activeGhost, setActiveGhost] = useState<Ghost | null>(null);
+		const [selectedGhost, setSelectedGhost] = useState<Ghost | null>(null);
 		const sensors = useSensors(
 			useSensor(PointerSensor, {
 				activationConstraint: {
@@ -156,6 +176,20 @@ export const GhostSetup = memo(
 				if (isValidPlayerPlacement(position)) {
 					onPlaceGhost(ghost, position);
 				}
+			}
+		};
+
+		const handleGhostClick = (ghost: Ghost) => {
+			setSelectedGhost(selectedGhost?.id === ghost.id ? null : ghost);
+		};
+
+		const handleCellClick = (row: number, col: number) => {
+			if (!selectedGhost) return;
+
+			const position: Position = { row, col };
+			if (isValidPlayerPlacement(position)) {
+				onPlaceGhost(selectedGhost, position);
+				setSelectedGhost(null);
 			}
 		};
 
@@ -196,6 +230,7 @@ export const GhostSetup = memo(
 													col={col}
 													ghost={ghost}
 													isValidPlacement={isValidPlacement}
+													onCellClick={handleCellClick}
 												/>
 											);
 										})}
@@ -208,7 +243,12 @@ export const GhostSetup = memo(
 							<h3>Available Ghosts</h3>
 							<div className="ghost-items">
 								{unplacedGhosts.map((ghost) => (
-									<DraggableGhostItem key={ghost.id} ghost={ghost} />
+									<DraggableGhostItem
+										key={ghost.id}
+										ghost={ghost}
+										isSelected={selectedGhost?.id === ghost.id}
+										onGhostClick={handleGhostClick}
+									/>
 								))}
 							</div>
 							{unplacedGhosts.length === 0 && (
