@@ -8,18 +8,14 @@
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.board-row {
-	/* No specific styles needed for tr */
-}
-
 .board-cell-container {
 	padding: 0;
 	border: none;
 }
 
 .board-cell {
-	width: 50px;
-	height: 50px;
+	width: 60px;
+	height: 60px;
 	border: 1px solid #ddd;
 	background-color: #f5f5dc;
 	cursor: pointer;
@@ -68,8 +64,8 @@
 }
 
 .ghost {
-	width: 48px;
-	height: 48px;
+	width: 55px;
+	height: 55px;
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
@@ -109,8 +105,8 @@
 }
 
 .ghost-image {
-	width: 40px;
-	height: 40px;
+	width: 50px;
+	height: 50px;
 	object-fit: cover;
 	border-radius: 50%;
 }
@@ -166,7 +162,76 @@
 	box-shadow: 0 0 0 3px #ff9800;
 }
 
-/* Responsive design */
+/* Large desktop screens */
+@media (min-width: 1440px) {
+	.board {
+		padding: 24px;
+	}
+
+	.board-cell {
+		width: 80px;
+		height: 80px;
+	}
+
+	.ghost {
+		width: 75px;
+		height: 75px;
+		font-size: 16px;
+	}
+
+	.ghost-image {
+		width: 70px;
+		height: 70px;
+	}
+}
+
+/* Standard desktop and large tablets */
+@media (min-width: 1024px) and (max-width: 1439px) {
+	.board {
+		padding: 20px;
+	}
+
+	.board-cell {
+		width: 70px;
+		height: 70px;
+	}
+
+	.ghost {
+		width: 65px;
+		height: 65px;
+		font-size: 15px;
+	}
+
+	.ghost-image {
+		width: 60px;
+		height: 60px;
+	}
+}
+
+/* iPad and medium tablets */
+@media (min-width: 769px) and (max-width: 1023px) {
+	.board {
+		padding: 18px;
+	}
+
+	.board-cell {
+		width: 65px;
+		height: 65px;
+	}
+
+	.ghost {
+		width: 60px;
+		height: 60px;
+		font-size: 14px;
+	}
+
+	.ghost-image {
+		width: 55px;
+		height: 55px;
+	}
+}
+
+/* Mobile and small tablets */
 @media (max-width: 768px) {
 	.board-cell {
 		width: 40px;
