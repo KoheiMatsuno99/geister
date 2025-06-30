@@ -26,6 +26,8 @@
 	transition: all 0.2s ease;
 	font-family: inherit;
 	padding: 0;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .board-cell:hover {
@@ -75,6 +77,8 @@
 	border: 2px solid;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	transition: transform 0.2s ease;
+	cursor: pointer;
+	touch-action: manipulation;
 }
 
 .ghost:hover {
@@ -109,10 +113,31 @@
 	height: 50px;
 	object-fit: cover;
 	border-radius: 50%;
+	pointer-events: none;
+	user-select: none;
 }
 
 .ghost--computer .ghost-image {
 	transform: rotate(180deg);
+}
+
+.ghost--selected {
+	border-width: 4px;
+	border-color: #ff9800 !important;
+	box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+	animation: selectedPulse 2s infinite;
+}
+
+@keyframes selectedPulse {
+	0% {
+		box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+	}
+	50% {
+		box-shadow: 0 0 20px rgba(255, 152, 0, 1);
+	}
+	100% {
+		box-shadow: 0 0 12px rgba(255, 152, 0, 0.8);
+	}
 }
 
 .valid-move-indicator {
@@ -156,10 +181,6 @@
 	transform: scale(1.1);
 	z-index: 1000;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.ghost--selected {
-	box-shadow: 0 0 0 3px #ff9800;
 }
 
 /* Large desktop screens */
@@ -234,19 +255,25 @@
 /* Mobile and small tablets */
 @media (max-width: 768px) {
 	.board-cell {
-		width: 40px;
-		height: 40px;
+		width: 50px;
+		height: 50px;
+		/* Larger touch targets for mobile */
+		min-width: 44px;
+		min-height: 44px;
 	}
 
 	.ghost {
-		width: 32px;
-		height: 32px;
+		width: 40px;
+		height: 40px;
 		font-size: 12px;
+		/* Larger touch targets for mobile */
+		min-width: 44px;
+		min-height: 44px;
 	}
 
 	.ghost-image {
-		width: 32px;
-		height: 32px;
+		width: 38px;
+		height: 38px;
 	}
 
 	.ghost--computer .ghost-image {
@@ -260,19 +287,25 @@
 
 @media (max-width: 480px) {
 	.board-cell {
-		width: 35px;
-		height: 35px;
+		width: 45px;
+		height: 45px;
+		/* Ensure minimum touch target size */
+		min-width: 44px;
+		min-height: 44px;
 	}
 
 	.ghost {
-		width: 28px;
-		height: 28px;
+		width: 36px;
+		height: 36px;
 		font-size: 10px;
+		/* Ensure minimum touch target size */
+		min-width: 44px;
+		min-height: 44px;
 	}
 
 	.ghost-image {
-		width: 28px;
-		height: 28px;
+		width: 34px;
+		height: 34px;
 	}
 
 	.ghost--computer .ghost-image {

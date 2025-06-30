@@ -53,7 +53,10 @@ const DraggableGhost = memo(
 				style={style}
 				className={`ghost ghost--${ghost.color} ghost--${ghost.owner} ${ghost.isRevealed ? "ghost--revealed" : "ghost--hidden"} ${isSelected ? "ghost--selected" : ""} ${isDragging ? "ghost--dragging" : ""}`}
 				data-testid={`ghost-${ghost.id}`}
-				onClick={() => onGhostClick(ghost)}
+				onClick={(e) => {
+					e.stopPropagation();
+					onGhostClick(ghost);
+				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" || e.key === " ") {
 						e.preventDefault();
