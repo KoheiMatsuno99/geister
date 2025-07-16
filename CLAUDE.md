@@ -1,0 +1,10 @@
+- Google TypeScript Style Guideに従うこと
+- Reactの書き方はhttps://ja.react.dev/ に従うこと
+- テスト駆動開発を必須で実装すること　
+- テスト駆動開発はt_wadaが推奨する方法に従うこと
+- リファクタリングはMartin Fowlerが推奨する方法に従うこと
+- 適切なタイミングでコミットすること
+- コミット前にpnpm lint, pnpm format, pnpm testを実行し、結果が全て成功することを確認すること
+- コードには How, テストコードには What, コミットログには Why, コードコメントには Why notを書くこと
+- Conventional Commitsに従うこと
+- コンポーネントにはstorybookも作成すること
