@@ -1,4 +1,5 @@
-[Play Online](https://geister-gamma.vercel.app/)
+<a href="https://geister-gamma.vercel.app/" target="_blank" rel="noopener noreferrer">Play Online(click here!)</a>
+
 
 ## Game Rules
 
