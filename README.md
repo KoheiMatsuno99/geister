@@ -1,6 +1,12 @@
 <a href="https://geister-gamma.vercel.app/" target="_blank" rel="noopener noreferrer">Play Online(click here!)</a>
 
 
+
+
+https://github.com/user-attachments/assets/8e46c72e-8d37-4be6-b9f1-730cf0a13add
+
+
+
 ## Game Rules
 
 ### Objective
