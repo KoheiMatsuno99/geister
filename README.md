@@ -1,3 +1,5 @@
+[Play Online](https://geister-gamma.vercel.app/)
+
 ## Game Rules
 
 ### Objective
